@@ -3,8 +3,8 @@ const path = require('path');
 
 function printUsage() {
     console.log('Usage:');
-    console.log('  node index.js --video <youtube_url> <output.mp4>');
-    console.log('  node index.js --audio <youtube_url> <output.mp3>');
+    console.log('yt --video <youtube_url> <output.mp4>');
+    console.log('yt --audio <youtube_url> <output.mp3>');
     process.exit(1);
 }
 
