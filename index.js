@@ -1,54 +1,40 @@
-const fs = require("fs");
-const ytdl = require("@distube/ytdl-core");
-const ffmpeg = require("fluent-ffmpeg");
+const { downloadVideo, downloadAudio } = require('./yt');
+const path = require('path');
 
-/**
- * Downloads a YouTube video as an MP4 file.
- * @param {string} youtubeUrl - The YouTube video URL.
- * @param {string} fileName - The output file name (should end with .mp4).
- * @returns {Promise<void>}
- */
-async function downloadYouTubeVideo(youtubeUrl, fileName) {
-  if (!ytdl.validateURL(youtubeUrl)) {
-    throw new Error("Invalid YouTube URL");
-  }
-  if (!fileName.endsWith(".mp4")) {
-    throw new Error("File name must end with .mp4");
-  }
-  return new Promise((resolve, reject) => {
-    ytdl(youtubeUrl, { filter: "audioandvideo", quality: "highestvideo" })
-      .pipe(fs.createWriteStream(fileName))
-      .on("finish", resolve)
-      .on("error", reject);
-  });
+function printUsage() {
+    console.log('Usage:');
+    console.log('  node index.js --video <youtube_url> <output.mp4>');
+    console.log('  node index.js --audio <youtube_url> <output.mp3>');
+    process.exit(1);
 }
 
-/**
- * Downloads only the audio track from a YouTube video as an MP3 file.
- * @param {string} youtubeUrl - The YouTube video URL.
- * @param {string} fileName - The output file name (should end with .mp3).
- * @returns {Promise<void>}
- */
-async function downloadYouTubeAudio(youtubeUrl, fileName) {
-  if (!ytdl.validateURL(youtubeUrl)) {
-    throw new Error("Invalid YouTube URL");
-  }
-  if (!fileName.endsWith(".mp3")) {
-    throw new Error("File name must end with .mp3");
-  }
-  const stream = ytdl(youtubeUrl, {
-    filter: "audioonly",
-    quality: "highestaudio",
-  });
-  return new Promise((resolve, reject) => {
-    ffmpeg(stream)
-      .audioBitrate(128)
-      .format("mp3")
-      .on("end", resolve)
-      .on("error", reject)
-      .save(fileName);
-  });
+const args = process.argv.slice(2);
+
+if (args.length !== 3) {
+    printUsage();
 }
 
-exports.downloadYouTubeAudio = downloadYouTubeAudio;
-exports.downloadYouTubeVideo = downloadYouTubeVideo;
+const [mode, url, output] = args;
+
+if (!/^https?:\/\/(www\.)?youtube\.com|youtu\.be\//.test(url)) {
+    console.error('Invalid YouTube URL.');
+    process.exit(1);
+}
+
+if (mode === '--video') {
+    downloadVideo(url, output)
+        .then(() => console.log(`Video downloaded to ${output}`))
+        .catch(err => {
+            console.error('Error downloading video:', err.message);
+            process.exit(1);
+        });
+} else if (mode === '--audio') {
+    downloadAudio(url, output)
+        .then(() => console.log(`Audio downloaded to ${output}`))
+        .catch(err => {
+            console.error('Error downloading audio:', err.message);
+            process.exit(1);
+        });
+} else {
+    printUsage();
+}

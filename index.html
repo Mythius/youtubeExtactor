@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+    <style>
+        #song{
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            border: 1px solid black;
+            width: 500px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="song"></div>
+
+    <script src="music.js"></script>
+    <script async>
+
+        const div = document.querySelector('div');
+        Music.loadPlayList('7phO9PAhj7bU6TwcHPrr7s');
+        async function main() {
+            await Music.playNext();
+            let data = await Music.getSongData();
+            // console.log(data);
+            div.innerHTML = `<img width=50 height=50 src="${data.thumbnail}"><h3>${data.name}</h3><p>${data.artist}</p>`;
+        }
+        document.addEventListener('keydown', e => {
+            main();
+        })
+
+    </script>
+
+
+    <!-- Example usage: -->
+    <!-- <button onclick="Music.playNext()">Play Track</button> -->
+</body>
+
+</html>
