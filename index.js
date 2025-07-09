@@ -1,4 +1,4 @@
-const { downloadVideo, downloadAudio } = require('./yt');
+const { downloadYouTubeVideo, downloadYouTubeAudio } = require('./yt');
 const path = require('path');
 
 function printUsage() {
@@ -22,14 +22,14 @@ if (!/^https?:\/\/(www\.)?youtube\.com|youtu\.be\//.test(url)) {
 }
 
 if (mode === '--video') {
-    downloadVideo(url, output)
+    downloadYouTubeVideo(url, output)
         .then(() => console.log(`Video downloaded to ${output}`))
         .catch(err => {
             console.error('Error downloading video:', err.message);
             process.exit(1);
         });
 } else if (mode === '--audio') {
-    downloadAudio(url, output)
+    downloadYouTubeAudio(url, output)
         .then(() => console.log(`Audio downloaded to ${output}`))
         .catch(err => {
             console.error('Error downloading audio:', err.message);
