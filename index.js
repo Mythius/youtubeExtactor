@@ -16,10 +16,6 @@ if (args.length !== 3) {
 
 const [mode, url, output] = args;
 
-if (!/^https?:\/\/(www\.)?youtube\.com|youtu\.be\//.test(url)) {
-    console.error('Invalid YouTube URL.');
-    process.exit(1);
-}
 
 if (mode === '--video') {
     downloadYouTubeVideo(url, output)
